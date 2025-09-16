@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
+import type { Metadata } from 'next';
+import { Inter as FontSans } from 'next/font/google';
 
-import "./globals.css";
+import './globals.css';
 
-import { ThemeProvider } from "@/components/theme-provider";
-import { cn } from "@/lib/utils";
+import { ThemeProvider } from '@/components/theme-provider';
+import { cn } from '@/lib/utils';
 
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 
 const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
+  subsets: ['latin'],
+  variable: '--font-sans',
 });
 
 export const metadata: Metadata = {
-  title: "NextFlix",
-  description: "Movie catalog with watchlist",
+  title: 'NextFlix',
+  description: 'Movie catalog with watchlist',
 };
 
 export default function RootLayout({
@@ -26,17 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased flex flex-col",
-          fontSans.variable
-        )}
-      >
+      <body className={cn('min-h-screen bg-background font-sans antialiased flex flex-col', fontSans.variable)}>
         <ThemeProvider>
           <Header />
-          <main className="flex-grow container mx-auto px-4 py-8">
-            {children}
-          </main>
+          <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>
