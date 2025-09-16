@@ -1,0 +1,70 @@
+import Image from 'next/image';
+import Link from 'next/link';
+
+type MovieCardProps = Readonly<{
+  id: number;
+  title: string;
+  releaseDate?: string | null;
+  posterPath?: string | null;
+  priority?: boolean;
+  prefetch?: boolean;
+}>;
+
+/** Build TMDB image URL for a given size */
+function tmdbPosterUrl(path: string, size: 'w500' | 'w780' | 'original' = 'w500') {
+  return `https://image.tmdb.org/t/p/${size}${path}`;
+}
+
+/** Extracts year from "YYYY-MM-DD" safely */
+function yearFromIso(iso?: string | null): string {
+  if (!iso || iso.length < 4) return 'N/A';
+  const y = iso.slice(0, 4);
+  return /^\d{4}$/.test(y) ? y : 'N/A';
+}
+
+export function MovieCard({
+  id,
+  title,
+  posterPath,
+  releaseDate,
+  priority = false,
+  prefetch = false,
+}: MovieCardProps) {
+  const year = yearFromIso(releaseDate);
+  const imageUrl = posterPath ? tmdbPosterUrl(posterPath, 'w500') : null;
+
+  return (
+    <Link
+      href={`/movie/${id}`}
+      prefetch={prefetch}
+      aria-label={`Open movie: ${title}`}
+      className="group block"
+    >
+      <div className="overflow-hidden rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105">
+        <div className="relative aspect-[2/3] w-full">
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 18vw"
+              className="object-cover"
+              placeholder="blur"
+              blurDataURL="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+              priority={priority}
+            />
+          ) : (
+            /* fallback poster */
+            <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
+              No poster
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="mt-2">
+        <h3 className="truncate text-lg font-semibold group-hover:text-primary">{title}</h3>
+        <p className="text-sm text-muted-foreground">{year}</p>
+      </div>
+    </Link>
+  );
+}
