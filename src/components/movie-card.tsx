@@ -1,3 +1,4 @@
+import { paths } from '@/lib/paths';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -35,7 +36,7 @@ export function MovieCard({
 
   return (
     <Link
-      href={`/movie/${id}`}
+      href={paths.movie(id)}
       prefetch={prefetch}
       aria-label={`Open movie: ${title}`}
       className="group block"
