@@ -128,44 +128,42 @@ export type MovieDetails = Readonly<{
   genres: string[];
 }>;
 
-export const getMovieDetails = cache(
-  async (
-    id: number | string,
-    opts: {
-      language?: string;
-    } = {}
-  ): Promise<MovieDetails | null> => {
-    const url = buildUrl(`/movie/${id}`, {
-      language: opts.language ?? 'en-US',
+export const getMovieDetails = async (
+  id: number | string,
+  opts: {
+    language?: string;
+  } = {}
+): Promise<MovieDetails | null> => {
+  const url = buildUrl(`/movie/${id}`, {
+    language: opts.language ?? 'en-US',
+  });
+
+  try {
+    const data = await fetchJson<unknown>(url, {
+      revalidate: 3600, // TTL (ISR) 1 hour
+      // Granularity example: Unique tag for each movie enables precise cache invalidation
+      // Instead of clearing all movie data, we can target just this specific movie
+      tags: [`movie:${id}`],
     });
 
-    try {
-      const data = await fetchJson<unknown>(url, {
-        revalidate: 3600, // 1 hour
-        // Granularity example: Unique tag for each movie enables precise cache invalidation
-        // Instead of clearing all movie data, we can target just this specific movie
-        tags: [`movie:${id}`],
-      });
-
-      const parsed = TmdbMovieDetails.safeParse(data);
-      if (!parsed.success) {
-        return null;
-      }
-
-      const details = parsed.data;
-      return {
-        id: details.id,
-        title: details.title,
-        overview: details.overview,
-        posterPath: details.poster_path,
-        backdropPath: details.backdrop_path,
-        releaseDate: details.release_date,
-        rating: details.vote_average,
-        genres: details.genres.map((g) => g.name),
-      };
-    } catch (error) {
-      console.error(`Movie with id ${id} not found`, error);
+    const parsed = TmdbMovieDetails.safeParse(data);
+    if (!parsed.success) {
       return null;
     }
+
+    const details = parsed.data;
+    return {
+      id: details.id,
+      title: details.title,
+      overview: details.overview,
+      posterPath: details.poster_path,
+      backdropPath: details.backdrop_path,
+      releaseDate: details.release_date,
+      rating: details.vote_average,
+      genres: details.genres.map((g) => g.name),
+    };
+  } catch (error) {
+    console.error(`Movie with id ${id} not found`, error);
+    return null;
   }
-);
+};

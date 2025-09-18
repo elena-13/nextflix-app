@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
 import { getMovieDetails, getPopularMovies } from '@/lib/tmdb.server';
+import { RefreshButton } from './RefreshButton';
 
 type RouteParams = { id: string };
 
@@ -94,6 +95,7 @@ export default async function MovieDetailsPage({ params }: { params: Promise<Rou
 
           <div className="mt-4 md:mt-0 text-white">
             <h1 className="text-3xl md:text-5xl font-bold">{movie.title}</h1>
+            <RefreshButton id={id} />
             <div className="flex items-center gap-4 mt-2 text-gray-300">
               <span>{year}</span>
               <span>•</span>
