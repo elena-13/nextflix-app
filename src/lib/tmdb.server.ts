@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { cache as memo } from 'react';
+import { cache } from 'react';
 
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_TOKEN = process.env.TMDB_API_READ_ACCESS_TOKEN;
@@ -73,8 +73,7 @@ export type Movie = Readonly<{
 }>;
 
 /** Popular movies with ISR + tag for on-demand revalidate */
-// eslint-disable-next-line react/display-name
-export const getPopularMovies = memo(
+export const getPopularMovies = cache(
   async (
     opts: {
       language?: string;
@@ -104,3 +103,67 @@ export const getPopularMovies = memo(
     }));
   }
 );
+
+/* ----------- Schemas & domain mapping for Movie Details ----------- */
+
+const TmdbMovieDetails = z.object({
+  id: z.number(),
+  title: z.string(),
+  overview: z.string().nullable(),
+  poster_path: z.string().nullable(),
+  backdrop_path: z.string().nullable(),
+  release_date: z.string().nullable(),
+  vote_average: z.number(),
+  genres: z.array(z.object({ name: z.string() })).default([]),
+});
+
+export type MovieDetails = Readonly<{
+  id: number;
+  title: string;
+  overview: string | null;
+  posterPath: string | null;
+  backdropPath: string | null;
+  releaseDate: string | null;
+  rating: number; // vote_average
+  genres: string[];
+}>;
+
+export const getMovieDetails = async (
+  id: number | string,
+  opts: {
+    language?: string;
+  } = {}
+): Promise<MovieDetails | null> => {
+  const url = buildUrl(`/movie/${id}`, {
+    language: opts.language ?? 'en-US',
+  });
+
+  try {
+    const data = await fetchJson<unknown>(url, {
+      revalidate: 3600, // TTL (ISR) 1 hour
+      // Granularity example: Unique tag for each movie enables precise cache invalidation
+      // Instead of clearing all movie data, we can target just this specific movie
+      tags: [`movie:${id}`],
+    });
+
+    const parsed = TmdbMovieDetails.safeParse(data);
+    if (!parsed.success) {
+      return null;
+    }
+
+    const details = parsed.data;
+    return {
+      id: details.id,
+      title: details.title,
+      overview: details.overview,
+      posterPath: details.poster_path,
+      backdropPath: details.backdrop_path,
+      releaseDate: details.release_date,
+      rating: details.vote_average,
+      genres: details.genres.map((g) => g.name),
+    };
+  } catch (error) {
+    console.error(`Movie with id ${id} not found`, error);
+    return null;
+  }
+};
