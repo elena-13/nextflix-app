@@ -167,3 +167,49 @@ export const getMovieDetails = async (
     return null;
   }
 };
+
+/* ----------- Schemas & domain mapping for Search ----------- */
+
+const TmdbSearchMovie = z.object({
+  id: z.number(),
+  title: z.string(),
+  poster_path: z.string().nullable(),
+  release_date: z.string().nullable(),
+});
+
+const TmdbSearchResponse = z.object({
+  results: z.array(TmdbSearchMovie),
+});
+
+export type SearchResultMovie = Movie;
+
+/** Search for movies by query */
+export const searchMovies = async (
+  query: string,
+  opts: { language?: string; page?: number } = {}
+): Promise<SearchResultMovie[]> => {
+  if (!query) return [];
+
+  const url = buildUrl('/search/movie', {
+    query,
+    language: opts.language ?? 'en-US',
+    page: opts.page ?? 1,
+  });
+
+  // We don't use long-term caching for search, as results are always dynamic.
+  // no-store ensures each search is fresh.
+  const data = await fetchJson<unknown>(url, { cache: 'no-store' });
+
+  const parsed = TmdbSearchResponse.safeParse(data);
+  if (!parsed.success) {
+    console.error('Failed to parse search results:', parsed.error.format());
+    return [];
+  }
+
+  return parsed.data.results.map((m) => ({
+    id: m.id,
+    title: m.title,
+    posterPath: m.poster_path ?? null,
+    releaseDate: m.release_date ?? null,
+  }));
+};
