@@ -20,6 +20,12 @@ export const asBoolean = (value: unknown, fallback = false): boolean => {
   return ['true', '1', 'yes'].includes(str);
 };
 
+export async function resolveSearchParams(
+  sp?: RouteSearchParams | Promise<RouteSearchParams>
+): Promise<RouteSearchParams> {
+  return (sp instanceof Promise ? await sp : sp) ?? {};
+}
+
 export const getQueryFrom = (
   searchParams?: RouteSearchParams,
   key = 'query',

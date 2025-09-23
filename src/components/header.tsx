@@ -8,6 +8,7 @@ import { paths } from '@/lib/paths';
 
 import { ThemeToggle } from './theme-toggle';
 import { HeaderSearchInput } from './header/HeaderSearchInput';
+import { Suspense } from 'react';
 
 export function Header() {
   return (
@@ -19,7 +20,9 @@ export function Header() {
         </Link>
 
         <div className="flex-1 px-8">
-          <HeaderSearchInput />
+          <Suspense fallback={<div className="w-full max-w-md mx-auto h-9 rounded-md bg-muted" />}>
+            <HeaderSearchInput />
+          </Suspense>
         </div>
 
         <div className="flex items-center gap-4">

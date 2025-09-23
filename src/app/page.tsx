@@ -3,12 +3,15 @@ import { Suspense } from 'react';
 import { SearchResults } from './search/components/SearchResults';
 import { SearchResultsSkeleton } from './search/components/SearchResultsSkeleton';
 import PopularMovies from '@/components/PopularMovies';
-import { getQueryFrom, RouteSearchParams } from '@/lib/query';
+import { getQueryFrom, resolveSearchParams, RouteSearchParams } from '@/lib/query';
 
-type Props = { searchParams?: RouteSearchParams };
-
-export default async function HomePage({ searchParams }: Props) {
-  const query = getQueryFrom(searchParams);
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: Promise<RouteSearchParams>;
+}) {
+  const sp = await resolveSearchParams(searchParams);
+  const query = getQueryFrom(sp);
 
   return (
     <div className="mt-8">

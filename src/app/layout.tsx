@@ -21,10 +21,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  searchModal,
 }: Readonly<{
   children: React.ReactNode;
-  searchModal: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
