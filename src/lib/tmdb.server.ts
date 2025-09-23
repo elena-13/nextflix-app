@@ -9,14 +9,19 @@ if (!TMDB_TOKEN) {
   throw new Error('Missing TMDB_API_READ_ACCESS_TOKEN');
 }
 
-function buildUrl(path: string, params?: Record<string, string | number | undefined>) {
+function buildUrl(path: string, params?: Record<string, string | number | undefined>): string {
   const url = new URL(`${TMDB_BASE}${path}`);
 
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      if (v !== undefined) url.searchParams.set(k, String(v));
-    }
+  if (!params) {
+    return url.toString();
   }
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined) return;
+
+    url.searchParams.set(key, String(value));
+  });
+
   return url.toString();
 }
 
@@ -166,4 +171,50 @@ export const getMovieDetails = async (
     console.error(`Movie with id ${id} not found`, error);
     return null;
   }
+};
+
+/* ----------- Schemas & domain mapping for Search ----------- */
+
+const TmdbSearchMovie = z.object({
+  id: z.number(),
+  title: z.string(),
+  poster_path: z.string().nullable(),
+  release_date: z.string().nullable(),
+});
+
+const TmdbSearchResponse = z.object({
+  results: z.array(TmdbSearchMovie),
+});
+
+export type SearchResultMovie = Movie;
+
+/** Search for movies by query */
+export const searchMovies = async (
+  query: string,
+  opts: { language?: string; page?: number } = {}
+): Promise<SearchResultMovie[]> => {
+  if (!query) return [];
+
+  const url = buildUrl('/search/movie', {
+    query,
+    language: opts.language ?? 'en-US',
+    page: opts.page ?? 1,
+  });
+
+  // We don't use long-term caching for search, as results are always dynamic.
+  // no-store ensures each search is fresh.
+  const data = await fetchJson<unknown>(url, { cache: 'no-store' });
+
+  const parsed = TmdbSearchResponse.safeParse(data);
+  if (!parsed.success) {
+    console.error('Failed to parse search results:', parsed.error.format());
+    return [];
+  }
+
+  return parsed.data.results.map((m) => ({
+    id: m.id,
+    title: m.title,
+    posterPath: m.poster_path ?? null,
+    releaseDate: m.release_date ?? null,
+  }));
 };

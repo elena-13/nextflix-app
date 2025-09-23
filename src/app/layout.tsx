@@ -26,7 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background font-sans antialiased flex flex-col', fontSans.variable)}>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased flex flex-col',
+          fontSans.variable
+        )}
+      >
         <ThemeProvider>
           <Header />
           <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
