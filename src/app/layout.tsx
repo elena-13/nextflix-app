@@ -21,14 +21,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  searchModal,
 }: Readonly<{
   children: React.ReactNode;
+  searchModal: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background font-sans antialiased flex flex-col', fontSans.variable)}>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased flex flex-col',
+          fontSans.variable
+        )}
+      >
         <ThemeProvider>
           <Header />
+          {searchModal}
           <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
           <Footer />
         </ThemeProvider>

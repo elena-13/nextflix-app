@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { Film } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import { paths } from '@/lib/paths';
 
 import { ThemeToggle } from './theme-toggle';
+import { HeaderSearchInput } from './header/HeaderSearchInput';
 
 export function Header() {
   return (
@@ -19,7 +19,7 @@ export function Header() {
         </Link>
 
         <div className="flex-1 px-8">
-          <Input type="search" placeholder="Search movies..." className="w-full max-w-md mx-auto" />
+          <HeaderSearchInput />
         </div>
 
         <div className="flex items-center gap-4">

@@ -9,14 +9,19 @@ if (!TMDB_TOKEN) {
   throw new Error('Missing TMDB_API_READ_ACCESS_TOKEN');
 }
 
-function buildUrl(path: string, params?: Record<string, string | number | undefined>) {
+function buildUrl(path: string, params?: Record<string, string | number | undefined>): string {
   const url = new URL(`${TMDB_BASE}${path}`);
 
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      if (v !== undefined) url.searchParams.set(k, String(v));
-    }
+  if (!params) {
+    return url.toString();
   }
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined) return;
+
+    url.searchParams.set(key, String(value));
+  });
+
   return url.toString();
 }
 
