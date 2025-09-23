@@ -1,13 +1,12 @@
 'use client';
 
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 import { Input } from '@/components/ui/input';
 
 export function HeaderSearchInput() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
