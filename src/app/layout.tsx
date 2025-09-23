@@ -36,7 +36,6 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Header />
-          {searchModal}
           <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
           <Footer />
         </ThemeProvider>

@@ -1,27 +1,27 @@
-import { MovieCard } from '@/components/movie-card';
-import { getPopularMovies } from '@/lib/tmdb.server';
+import { Suspense } from 'react';
 
-export default async function HomePage() {
-  const movies = await getPopularMovies();
+import { SearchResults } from './search/components/SearchResults';
+import { SearchResultsSkeleton } from './search/components/SearchResultsSkeleton';
+import PopularMovies from '@/components/PopularMovies';
+
+type Props = {
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
+
+export default async function HomePage({ searchParams }: Props) {
+  const raw = searchParams?.query;
+  const query = typeof raw === 'string' ? raw : raw?.[0] ?? '';
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Popular films today</h1>
-
-      {movies.length ? (
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              id={movie.id}
-              title={movie.title}
-              posterPath={movie.posterPath ?? ''}
-              releaseDate={movie.releaseDate ?? ''}
-            />
-          ))}
-        </div>
+    <div className="mt-8">
+      {query ? (
+        <Suspense key={query} fallback={<SearchResultsSkeleton />}>
+          <SearchResults query={query} />
+        </Suspense>
       ) : (
-        <p className="text-muted-foreground">Failed to load movies. Please try again later.</p>
+        <Suspense fallback={<div className="text-muted-foreground">Loading popular…</div>}>
+          <PopularMovies />
+        </Suspense>
       )}
     </div>
   );
