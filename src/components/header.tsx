@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { Film, Bookmark } from 'lucide-react';
+import { Film } from 'lucide-react';
 
 import { paths } from '@/lib/paths';
 
