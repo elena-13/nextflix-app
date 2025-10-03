@@ -9,6 +9,7 @@ import { paths } from '@/lib/paths';
 import { ThemeToggle } from './theme-toggle';
 import { HeaderSearchInput } from './header/HeaderSearchInput';
 import { Suspense } from 'react';
+import { AuthButtons } from './AuthButtons';
 
 export function Header() {
   return (
@@ -27,7 +28,8 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <Button>Login</Button>
+          <AuthButtons />
+          {/* <Button>Login</Button> */}
         </div>
       </div>
     </header>
