@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
+import { getServerSession } from 'next-auth';
 
 import './globals.css';
 
@@ -8,6 +9,8 @@ import { cn } from '@/lib/utils';
 
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
+import { Providers } from './providers';
+import { authOptions } from './api/auth/[...nextauth]/route';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -19,11 +22,13 @@ export const metadata: Metadata = {
   description: 'Movie catalog with watchlist',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -32,11 +37,13 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <ThemeProvider>
-          <Header />
-          <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
-          <Footer />
-        </ThemeProvider>
+        <Providers session={session}>
+          <ThemeProvider>
+            <Header />
+            <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
+            <Footer />
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

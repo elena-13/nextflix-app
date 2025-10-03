@@ -1,28 +1,30 @@
-import { MovieCard } from '@/components/movie-card';
 import { getPopularMovies } from '@/lib/tmdb.server';
+import { prisma } from '@/lib/prisma';
+import { getCurrentUserId } from '@/lib/session';
+
+import { MovieList } from './MovieList';
 
 export default async function PopularMovies() {
-  const movies = await getPopularMovies();
+  const moviesPromise = getPopularMovies();
+  const userIdPromise = getCurrentUserId();
+
+  const [movies, userId] = await Promise.all([moviesPromise, userIdPromise]);
+
+  // 2. If the user is logged in, retrieve the movie IDs from their watchlist
+  let watchlistMovieIds = new Set<number>();
+  if (userId) {
+    const watchlist = await prisma.watchlist.findMany({
+      where: { userId: userId },
+      select: { movieId: true }, // Request only IDs for efficiency
+    });
+    // Convert the array of objects into a Set for fast lookup (O(1))
+    watchlistMovieIds = new Set(watchlist.map((item) => item.movieId));
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
       <h1 className="mb-8 text-3xl font-bold">Popular films today</h1>
-
-      {movies.length ? (
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              id={movie.id}
-              title={movie.title}
-              posterPath={movie.posterPath ?? ''}
-              releaseDate={movie.releaseDate ?? ''}
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-muted-foreground">Failed to load movies. Please try again later.</p>
-      )}
-    </div>
+      <MovieList movies={movies} watchlistMovieIds={watchlistMovieIds} />
+    </>
   );
 }

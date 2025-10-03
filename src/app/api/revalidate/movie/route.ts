@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 
-const SECRET = process.env.REVALIDATE_SECRET;
+const SECRET = process.env.REVALIDATE_SECRET_TOKEN;
 
 export const dynamic = 'force-dynamic'; // don't cache route
 
@@ -11,7 +11,7 @@ const ALLOWED_PREFIXES = ['movie:', 'popular']; // allows tags
 
 export async function POST(request: Request) {
   const token = request.headers.get('x-revalidate-token');
-  if (!process.env.REVALIDATE_SECRET_TOKEN || token !== process.env.REVALIDATE_SECRET_TOKEN) {
+  if (!SECRET || token !== SECRET) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401, headers: NO_STORE });
   }
 
