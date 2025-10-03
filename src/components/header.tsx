@@ -2,8 +2,6 @@ import Link from 'next/link';
 
 import { Film } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-
 import { paths } from '@/lib/paths';
 
 import { ThemeToggle } from './theme-toggle';
@@ -29,7 +27,6 @@ export function Header() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <AuthButtons />
-          {/* <Button>Login</Button> */}
         </div>
       </div>
     </header>

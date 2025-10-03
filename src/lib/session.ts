@@ -6,11 +6,12 @@ export async function getAuthSession() {
 }
 
 /**
- * Получает ID текущего авторизованного пользователя на сервере.
- * @returns {Promise<string | null>} ID пользователя или null, если не авторизован.
+ * Retrieves the ID of the currently authenticated user on the server.
+ * @returns {Promise<string | null>} The user ID, or null if not authenticated.
  */
+
 export async function getCurrentUserId(): Promise<string | null> {
   const session = await getAuthSession();
-  // Мы можем обращаться к id, потому что добавили его в callbacks!
+  // We can access the id because we added it in the callbacks!
   return session?.user?.id ?? null;
 }

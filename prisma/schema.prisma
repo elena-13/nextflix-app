@@ -8,12 +8,24 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model Movie {
+  id          Int      @id
+  title       String
+  description String?  @db.Text
+  posterUrl   String?
+
+
+  inWatchlists Watchlist[]
+}
+
 model Watchlist {
   id        String   @id @default(cuid())
   userId    String
   movieId   Int
   createdAt DateTime @default(now())
+
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
 
   @@unique([userId, movieId])
 }
