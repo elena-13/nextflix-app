@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUserId } from '@/lib/session';
 import { Movie } from '@prisma/client';
+import { MovieList } from '@/components/MovieList';
 
 export default async function WatchlistPage() {
   const userId = await getCurrentUserId();
@@ -31,14 +32,15 @@ export default async function WatchlistPage() {
   const movies: Movie[] =
     userWithWatchlist?.watchlist.map((watchlistItem) => watchlistItem.movie) ?? [];
 
+  const watchlistMovieIds = new Set(movies.map((m) => m.id));
+
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6">My &quot;Watch Later&quot; List</h1>
+      <h1 className="text-3xl font-bold mb-6">Watch Later</h1>
       {movies.length === 0 ? (
         <p>Your list is currently empty. Add some movies to see them here.</p>
       ) : (
-        <div>Temp</div>
-        // <WatchlistClient initialWatchlist={movies} />
+        <MovieList movies={movies} watchlistMovieIds={watchlistMovieIds} />
       )}
     </>
   );

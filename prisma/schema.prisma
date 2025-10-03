@@ -11,8 +11,8 @@ datasource db {
 model Movie {
   id          Int      @id
   title       String
-  description String?  @db.Text
-  posterUrl   String?
+  posterPath  String?
+  releaseDate String?
 
 
   inWatchlists Watchlist[]
