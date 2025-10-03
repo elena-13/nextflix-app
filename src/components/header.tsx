@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { Film } from 'lucide-react';
+import { Film, Bookmark } from 'lucide-react';
 
 import { paths } from '@/lib/paths';
 
@@ -8,6 +8,7 @@ import { ThemeToggle } from './theme-toggle';
 import { HeaderSearchInput } from './header/HeaderSearchInput';
 import { Suspense } from 'react';
 import { AuthButtons } from './AuthButtons';
+import { HeaderWatchlistLink } from './header/HeaderWatchlistLink';
 
 export function Header() {
   return (
@@ -25,6 +26,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4">
+          <HeaderWatchlistLink />
           <ThemeToggle />
           <AuthButtons />
         </div>

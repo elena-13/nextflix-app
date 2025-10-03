@@ -1,3 +1,5 @@
+'use client';
+
 import { paths } from '@/lib/paths';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,6 +9,7 @@ type MovieCardProps = Readonly<{
   title: string;
   releaseDate?: string | null;
   posterPath?: string | null;
+  initialIsInWatchlist: boolean;
   priority?: boolean;
   prefetch?: boolean;
 }>;
@@ -28,6 +31,7 @@ export function MovieCard({
   title,
   posterPath,
   releaseDate,
+  initialIsInWatchlist,
   priority = false,
   prefetch = false,
 }: MovieCardProps) {
