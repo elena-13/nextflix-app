@@ -50,7 +50,7 @@ export function AuthButtons() {
 
   return (
     <Button onClick={handleSignIn} aria-label="Login with Google">
-      Login with Google
+      Login
     </Button>
   );
 }
