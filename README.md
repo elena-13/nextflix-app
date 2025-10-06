@@ -1,15 +1,15 @@
 # NextFlix - Movie Catalog with Personal Watchlists
 
-A modern web application for discovering movies, exploring detailed information, and managing personal watchlists with advanced rendering strategies and optimal performance.
+A modern web application for discovering movies. Built as a learning exercise to master Next.js 14 App Router, React Server Components, and modern web development practices.
 
-### 🚀 Features
+## 🚀 Features
 
 - Movie Catalog with up-to-date information from TMDB
 - Smart Search
 - Detailed Movie Pages
 - Personal Watchlist
 
-### 🛠 Tech Stack
+## 🛠 Tech Stack
 
 ### Frontend
 
