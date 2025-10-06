@@ -37,13 +37,9 @@ export function MovieCard({
   const imageUrl = posterPath ? tmdbPosterUrl(posterPath, 'w500') : null;
 
   return (
-    <div>
-      <div className="group relative block">
-        <WatchlistToggleButton
-          movie={movie}
-          initialIsInWatchlist={initialIsInWatchlist}
-          className="transition-opacity duration-300 opacity-0 group-hover:opacity-100"
-        />
+    <div className="group relative">
+      <div className="absolute top-2 right-2 z-10 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+        <WatchlistToggleButton movie={movie} initialIsInWatchlist={initialIsInWatchlist} />
       </div>
       <Link
         href={paths.movie(id)}
